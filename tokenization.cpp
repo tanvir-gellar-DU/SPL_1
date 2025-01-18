@@ -86,10 +86,66 @@ bool is_valid_integer(string str)  //digit string
 }
 bool is_valid_float(string str)
 {
-    int flag1=0,flag2=0;
+    int digit=0,point=0;
     for(int i=0;i<str.size();i++)
     {
+        if(str[i]>='0'&& str[i] <='9')
+        {
+            digit=1;
+        }
         
+        else if(str[i]=='.')
+        {
+            point++;
+            if (point > 1) return false; 
+        }
+        else
+        {
+            return false;
+            break;
+        }
+    }
+    if(digit ==1 && point ==1)
+    return true;
+
+}
+bool is_valid_bool(string str)
+{
+    string arr[2]={"true","false"};
+    for(int i=0;i<2;i++)
+    {
+        if(str== arr[i])
+        return true;
+        else return false;
+    }
+}
+bool is_type_specifier(string str)
+{
+    if (str == "void" || str == "int" || str == "float" || str == "double" ||
+        str == "char" || str == "bool" || str == "short" || str == "long")
+        {
+            return true;
+        }
+        if (str.back() == '*' && is_type_specifier(str.substr(0, str.size() - 1))) 
+        {
+        return true;
+        }
+        return false;
+}
+bool is_valid_identifier(string str)
+{
+    bool flag=false;
+    for(int i=0;i<str.size();i++)
+    {
+    if(str[i]>='A'&& str[i]<= 'Z' || str[i]>='a'&& str[i]<='z' )
+
+    flag =true;
+    if(str[i]>='0' && str[i]<='9' || str[i]== '_')
+    flag =true;
+    
+
     }
 
+    if (flag) return true;
+    else return false;
 }
