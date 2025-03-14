@@ -1,44 +1,70 @@
-
 #include<stdio.h>
-float f;
-int main(){
-      int x;
-      
-      f=13.5;
-    for(x=0;x<5;x=x+1){
-           printf("Hello"); 
-           f=f-1;
-             if(x==0){
-          x=x+2;
-          printf("jcdj");
-            if(x>3){
-              f=5.5;
-         }       
-     }
-     f=f+5;
-   }
-  f=9.8;
-while(x>0){
-       x=x-1;
-       f=13.5;
-    }
-   f=11.5;
-   printf("jj");
-     while(x<5){
-      if(x==0){
-          x=x+2;
-          printf("jcdj");
-            if(x>3){
-              f=5.5;
-         }
-      printf("jf");
-      x=x+8;
-  }
-   printf("juuuf");
-   f=9;
-  }
-  x=x+1;
-   printf("jrf");
 
-return 0;
+
+
+int main() {
+    int x;
+    float f;
+    f = 13.5;
+
+    
+
+    
+    for (x = 0; x < 5; x = x + 1) {
+        printf("Hello"); 
+        f = f - 1;
+        if (x == 0) {
+            x = x + 2;
+            printf("jcdj");
+            if (x > 3) {
+                f = 5.5;
+            }
+        }
+        f = f + 5;
+    }
+
+    f = 9.8;
+    while (x > 0) {
+        x = x - 1;
+        f = 13.5;
+    }
+
+    f = 11.5;
+    printf("jj");
+
+    while (x < 5) {
+        if (x == 0) {
+            x = x + 2;
+            printf("jcdj");
+            if (x > 3) {
+                f = 5.5;
+            }
+            printf("jf");
+            x = x + 8;
+        }
+        printf("juuuf");
+        f = 9;
+    }
+
+    x = x + 1;
+    printf("jrf");
+
+    
+    return 0;
 }
+
+int add(int a, int b) {
+    return a + b;
+}
+
+
+int subtract(int a, int b) {
+    return a - b;
+}
+
+
+int multiply(int a, int b) {
+    return a * b;
+}
+
+
