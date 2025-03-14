@@ -1,22 +1,22 @@
-program → decl_list func_list main_func
+program → decl_list func_list main_func func_list
 decl_list → decl decl_list | ε
 decl → var_decl | func_decl
-var_decl → type_spec IDENTIFIER ; | type_spec IDENTIFIER [ ] ;
+var_decl → type_spec IDENTIFIER ;
 func_decl → type_spec IDENTIFIER ( param_list ) compound_stmt
 param_list → type_spec IDENTIFIER , param_list | type_spec IDENTIFIER | ε
 compound_stmt → { local_decls stmt_list }
 local_decls → local_decl local_decls | ε
-local_decl → type_spec IDENTIFIER ; | type_spec IDENTIFIER [ ] ;
+local_decl → type_spec IDENTIFIER ;
 stmt_list → stmt stmt_list | ε
-stmt → expr_stmt | if_stmt | while_stmt | return_stmt | break_stmt | print_stmt | var_decl | for_stmt
+stmt → expr_stmt | if_stmt | while_stmt | for_stmt | return_stmt | break_stmt | print_stmt | local_decl
 expr_stmt → IDENTIFIER = expr ;
-if_stmt → IF ( expr ) { stmt_list }
-while_stmt → WHILE ( expr ) { stmt_list }
-for_stmt → FOR ( for_expr ; for_expr ; for_expr) { stmt_list }
+if_stmt → IF ( expr ) compound_stmt
+while_stmt → WHILE ( expr ) compound_stmt
+for_stmt → FOR ( for_expr ; for_expr ; for_expr ) compound_stmt
 for_expr → expr | ε
 return_stmt → RETURN expr ; | RETURN ;
 break_stmt → BREAK ;
-print_stmt → PRINT ( expr ) ;
-expr → term | term + expr | term - expr | IDENT = expr | ( expr )
+print_stmt → PRINT ( expr ) ; | PRINT ( STRING_LIT ) ;
+expr → IDENTIFIER = expr | term | term + expr | term - expr | term < expr | term > expr | term == expr
 term → factor | factor * term | factor / term
-factor → IDENTIFIER | INTEGER_LITERAL | FLOAT_LITERAL | BOOL_LIT | STRING_LIT | ( expr )
+factor → IDENTIFIER | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LIT | ( expr ) | IDENTIFIER ( expr )
