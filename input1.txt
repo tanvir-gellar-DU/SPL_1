@@ -1,47 +1,73 @@
-//Here is the C source code
 #include<stdio.h>
-float f;
-int main(){
-      int x;
-      //x=0;
-      f=13.5;
-    for(x=0;x<5;x=x+1){
-           printf("Hello"); //++printing Hello**
-           f=f-1;
-             if(x==0){
-          x=x+2;
-          printf("jcdj");
-            if(x>3){
-              f=5.5;
-         }       
-     }
-     f=f+5;
-   }
-  f=9.8;
-while(x>0){
-       x=x-1;
-       f=13.5;
+
+
+
+int main() {
+    int x;
+    float f;
+    f = 13.5;
+
+    
+
+    // Original loop and logic
+    for (x = 0; x < 5; x = x + 1) {
+        printf("Hello"); //++printing Hello**
+        f = f - 1;
+        if (x == 0) {
+            x = x + 2;
+            printf("jcdj");
+            if (x > 3) {
+                f = 5.5;
+            }
+        }
+        f = f + 5;
     }
-   f=11.5;
-   printf("jj");
-     while(x<5){
-      if(x==0){
-          x=x+2;
-          printf("jcdj");
-            if(x>3){
-              f=5.5;
-         }
-      printf("jf");
-      x=x+8;
-  }
-   printf("juuuf");
-   f=9;
-  }
-  x=x+1;
-   printf("jrf");
-/*Multiple Line Comments
-end of the program
-------------------------
-*/
-return 0;
+
+    f = 9.8;
+    while (x > 0) {
+        x = x - 1;
+        f = 13.5;
+    }
+
+    f = 11.5;
+    printf("jj");
+
+    while (x < 5) {
+        if (x == 0) {
+            x = x + 2;
+            printf("jcdj");
+            if (x > 3) {
+                f = 5.5;
+            }
+            printf("jf");
+            x = x + 8;
+        }
+        printf("juuuf");
+        f = 9;
+    }
+
+    x = x + 1;
+    printf("jrf");
+
+    /* Multiple Line Comments
+    end of the program
+    ------------------------
+    */
+    return 0;
 }
+//Function to add two numbers
+int add(int a, int b) {
+    return a + b;
+}
+
+// Function to subtract two numbers
+int subtract(int a, int b) {
+    return a - b;
+}
+
+// Function to multiply two numbers
+int multiply(int a, int b) {
+    return a * b;
+}
+
+
