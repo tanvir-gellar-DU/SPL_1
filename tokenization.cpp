@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -19,8 +18,12 @@ enum TokenID {
     KW_WHILE = 14,       // while
     KW_FOR = 15,         // for
     KW_BREAK = 20,       // break
+    KW_CONTINUE = 21,    // continue (new)
     KW_IF = 22,          // if
     KW_ELSE = 23,        // else
+    KW_SWITCH = 24,      // switch (new)
+    KW_DO = 25,          // do (new)
+    KW_CASE = 26,        // case (new)
     KW_RETURN = 30,      // return
     ID_IDENT = 28,       // Identifiers (e.g., x, f)
     PUNC_SEMICOLON = 36, // ;
@@ -78,13 +81,38 @@ void removeAllcomments(FILE *input_file, FILE *output_file) {
     }
 }
 
-string keyword[11] = {"for", "while", "if", "else", "switch", "do", "case", "break", "continue", "return"};
+string keyword[10] = {"for", "while", "if", "else", "switch", "do", "case", "break", "continue", "return"};
 
-bool isNotkey(string str) {
-    for(int i = 0; i < 11; i++) { // Updated to 11 to match array size
-        if(str == keyword[i]) return false;
+int getKeywordTokenID(const string& str) {
+    if (str == "for") 
+    return KW_FOR;
+    if (str == "while")
+     return KW_WHILE;
+    if (str == "if") 
+    return KW_IF;
+    if (str == "else") 
+    return KW_ELSE;
+    if (str == "switch") 
+    return KW_SWITCH;
+    if (str == "do") 
+    return KW_DO;
+    if (str == "case") 
+    return KW_CASE;
+    if (str == "break") 
+    return KW_BREAK;
+    if (str == "continue") 
+    return KW_CONTINUE;
+    if (str == "return")
+     return KW_RETURN;
+    return 0; // Not a keyword
+}
+
+bool is_type_specifier(string str) {
+    string types[] = {"void", "int", "float", "double", "char", "bool", "short", "long"};
+    for(string type : types) {
+        if(str == type) return true;
     }
-    return true;
+    return false;
 }
 
 bool is_valid_integer(string str) {
@@ -112,14 +140,6 @@ bool is_valid_bool(string str) {
     for(int i = 0; i < 2; i++) {
         if(str == arr[i]) return true;
     }
-    return false; // Fixed to return false if neither matches
-}
-
-bool is_type_specifier(string str) {
-    string types[] = {"void", "int", "float", "double", "char", "bool", "short", "long"};
-    for(string type : types) {
-        if(str == type) return true;
-    }
     return false;
 }
 
@@ -135,22 +155,8 @@ bool is_valid_identifier(string str) {
     return true;
 }
 
-int ifElse_stmt(string str) {
-    if(str == "if") return KW_IF;
-    else if(str == "else") return KW_ELSE;
-    return 0;
-}
-
-bool return_stmt(string str) {
-    return str == "return";
-}
-
-bool break_stmt(string str) {
-    return str == "break";
-}
-
 int main() {
-    FILE *input_file = fopen("input.txt", "r");
+   /* FILE *input_file = fopen("input.txt", "r");
     if (input_file == NULL) {
         cout << "Error: Could not open input file.\n";
         return 1;
@@ -166,6 +172,35 @@ int main() {
     removeAllcomments(input_file, output_file);
     fclose(input_file);
     fclose(output_file);
+    cout << "Comments have been removed successfully.\n";*/
+    char inputFileName[100];
+
+    // Prompt the user to enter the input file name
+    cout << "Enter the input file name (e.g., input.txt): ";
+    cin >> inputFileName;
+
+    // Open the input file
+    FILE *input_file = fopen(inputFileName, "r");
+    if (input_file == NULL) {
+        cout << "Error: Could not open input file '" << inputFileName << "'.\n";
+        return 1;
+    }
+
+    // Open the output file
+    FILE *output_file = fopen("sourcecode.txt", "w");
+    if (output_file == NULL) {
+        cout << "Error: Could not open output file 'sourcecode.txt'.\n";
+        fclose(input_file); // Close the input file before exiting
+        return 1;
+    }
+
+    // Remove comments from the input file and write to the output file
+    removeAllcomments(input_file, output_file);
+
+    // Close the files
+    fclose(input_file);
+    fclose(output_file);
+
     cout << "Comments have been removed successfully.\n";
 
     string str = "";
@@ -191,10 +226,30 @@ int main() {
 
         if(ch == ' ' || ch == '\n' || ch == '\t') {
             if(!str.empty()) {
-                if(is_type_specifier(str)) {
+                int keywordID = getKeywordTokenID(str);
+                if(keywordID != 0) {
+                    token[token1].name = str;
+                    if (keywordID == KW_IF || keywordID == KW_ELSE) {
+                        token[token1].type = "if_stmt";
+                    }
+                    else if (keywordID == KW_FOR || keywordID == KW_WHILE || keywordID == KW_DO) {
+                        token[token1].type = "loop_keyword";
+                    }
+                    else if (keywordID == KW_SWITCH || keywordID == KW_CASE) {
+                        token[token1].type = "switch_stmt";
+                    }
+                    else if (keywordID == KW_BREAK || keywordID == KW_CONTINUE) {
+                        token[token1].type = "control_stmt";
+                    }
+                    else {
+                        token[token1].type = "RETURN";
+                    }
+                    token[token1].id = keywordID;
+                    token1++;
+                } else if(is_type_specifier(str)) {
                     string next_str = "";
                     char next_ch = input.get();
-                    while(next_ch == ' ' || next_ch == '\t') { // Skip whitespace
+                    while(next_ch == ' ' || next_ch == '\t') {
                         next_ch = input.get();
                     }
                     while(next_ch != ' ' && next_ch != '\n' && next_ch != '\t' && 
@@ -210,7 +265,7 @@ int main() {
                     if(str == "int" && next_str == "main") {
                         token[token1].name = "int_main";
                         token[token1].type = "main_func";
-                        token[token1].id = 9; // Assign Token_ID 9 for int main
+                        token[token1].id = MAIN_FUNC;
                         token1++;
                         str = "";
                         ch = next_ch;
@@ -219,12 +274,18 @@ int main() {
                     } else {
                         token[token1].name = str;
                         token[token1].type = "is_type_specifier";
-                        if(str == "int") token[token1].id = TYPE_INT;
-                        else if(str == "float") token[token1].id = TYPE_FLOAT;
-                        else if(str == "bool") token[token1].id = TYPE_BOOL;
-                        else if(str == "double") token[token1].id = TYPE_DOUBLE;
-                        else if(str == "void") token[token1].id = TYPE_VOID;
-                        else if(str == "char") token[token1].id = TYPE_CHAR;
+                        if(str == "int") 
+                        token[token1].id = TYPE_INT;
+                        else if(str == "float")
+                         token[token1].id = TYPE_FLOAT;
+                        else if(str == "bool") 
+                        token[token1].id = TYPE_BOOL;
+                        else if(str == "double") 
+                        token[token1].id = TYPE_DOUBLE;
+                        else if(str == "void") 
+                        token[token1].id = TYPE_VOID;
+                        else if(str == "char")
+                         token[token1].id = TYPE_CHAR;
                         token1++;
                         afterType = true;
                         str = next_str;
@@ -232,36 +293,6 @@ int main() {
                         prev_char = ch;
                         continue;
                     }
-                } else if(str == "for") {
-                    token[token1].name = str;
-                    token[token1].type = "loop_keyword";
-                    token[token1].id = KW_FOR;
-                    token1++;
-                } else if(str == "while") {
-                    token[token1].name = str;
-                    token[token1].type = "loop_keyword";
-                    token[token1].id = KW_WHILE;
-                    token1++;
-                } else if(str == "if") {
-                    token[token1].name = str;
-                    token[token1].type = "if_stmt";
-                    token[token1].id = KW_IF;
-                    token1++;
-                } else if(str == "else") {
-                    token[token1].name = str;
-                    token[token1].type = "if_stmt";
-                    token[token1].id = KW_ELSE;
-                    token1++;
-                } else if(return_stmt(str)) {
-                    token[token1].name = str;
-                    token[token1].type = "RETURN";
-                    token[token1].id = KW_RETURN;
-                    token1++;
-                } else if(break_stmt(str)) {
-                    token[token1].name = str;
-                    token[token1].type = "break_stmt";
-                    token[token1].id = KW_BREAK;
-                    token1++;
                 } else if(is_valid_integer(str)) {
                     token[token1].name = str;
                     token[token1].type = "integer_literal";
@@ -277,7 +308,7 @@ int main() {
                     token[token1].type = "bool_literal";
                     token[token1].id = LIT_BOOL;
                     token1++;
-                } else if(is_valid_identifier(str) && isNotkey(str)) {
+                } else if(is_valid_identifier(str)) {
                     token[token1].name = str;
                     token[token1].type = "identifier";
                     token[token1].id = ID_IDENT;
@@ -293,8 +324,28 @@ int main() {
 
         if(string(",;={}[]()+-*/<>!#").find(ch) != string::npos) {
             if(!str.empty()) {
-                if(is_type_specifier(str)) {
-                    if(str == "int" && afterType == false) { // Check for int main
+                int keywordID = getKeywordTokenID(str);
+                if(keywordID != 0) {
+                    token[token1].name = str;
+                    if (keywordID == KW_IF || keywordID == KW_ELSE) {
+                        token[token1].type = "if_stmt";
+                    }
+                    else if (keywordID == KW_FOR || keywordID == KW_WHILE || keywordID == KW_DO) {
+                        token[token1].type = "loop_keyword";
+                    }
+                    else if (keywordID == KW_SWITCH || keywordID == KW_CASE) {
+                        token[token1].type = "switch_stmt";
+                    }
+                    else if (keywordID == KW_BREAK || keywordID == KW_CONTINUE) {
+                        token[token1].type = "control_stmt";
+                    }
+                    else {
+                        token[token1].type = "RETURN";
+                    }
+                    token[token1].id = keywordID;
+                    token1++;
+                } else if(is_type_specifier(str)) {
+                    if(str == "int" && afterType == false) {
                         string next_str = "";
                         char next_ch = ch;
                         if(next_ch == ' ' || next_ch == '\t') {
@@ -315,7 +366,7 @@ int main() {
                         if(next_str == "main" && next_ch == '(') {
                             token[token1].name = "int_main";
                             token[token1].type = "main_func";
-                            token[token1].id = 9;
+                            token[token1].id = MAIN_FUNC;
                             token1++;
                             str = "";
                             ch = next_ch;
@@ -335,66 +386,42 @@ int main() {
                     } else {
                         token[token1].name = str;
                         token[token1].type = "is_type_specifier";
-                        if(str == "int") token[token1].id = TYPE_INT;
-                        else if(str == "float") token[token1].id = TYPE_FLOAT;
-                        else if(str == "bool") token[token1].id = TYPE_BOOL;
-                        else if(str == "double") token[token1].id = TYPE_DOUBLE;
-                        else if(str == "void") token[token1].id = TYPE_VOID;
-                        else if(str == "char") token[token1].id = TYPE_CHAR;
+                        if(str == "int") 
+                        token[token1].id = TYPE_INT;
+                        else if(str == "float")
+                         token[token1].id = TYPE_FLOAT;
+                        else if(str == "bool") 
+                        token[token1].id = TYPE_BOOL;
+                        else if(str == "double") 
+                        token[token1].id = TYPE_DOUBLE;
+                        else if(str == "void") 
+                        token[token1].id = TYPE_VOID;
+                        else if(str == "char") 
+                        token[token1].id = TYPE_CHAR;
                         token1++;
                         afterType = true;
                     }
-                } else if(str == "for") {
-                    token[token1].name = str;
-                    token[token1].type = "loop_keyword";
-                    token[token1].id = KW_FOR;
-                    token1++;
-                } else if(str == "while") {
-                    token[token1].name = str;
-                    token[token1].type = "loop_keyword";
-                    token[token1].id = KW_WHILE;
-                    token1++;
-                } else if(str == "if") {
-                    token[token1].name = str;
-                    token[token1].type = "if_stmt";
-                    token[token1].id = KW_IF;
-                    token1++;
-                } else if(str == "else") {
-                    token[token1].name = str;
-                    token[token1].type = "if_stmt";
-                    token[token1].id = KW_ELSE;
-                    token1++;
-                } else if(return_stmt(str)) {
-                    token[token1].name = str;
-                    token[token1].type = "RETURN";
-                    token[token1].id = KW_RETURN;
-                    token1++;
-                } else if(break_stmt(str)) {
-                    token[token1].name = str;
-                    token[token1].type = "break_stmt";
-                    token[token1].id = KW_BREAK;
-                    token1++;
                 } else if(is_valid_integer(str)) {
                     token[token1].name = str;
                     token[token1].type = "integer_literal";
                     token[token1].id = LIT_INT;
-                    token1++;
-                } else if(is_valid_bool(str)) {
-                    token[token1].name = str;
-                    token[token1].type = "bool_literal";
-                    token[token1].id = LIT_BOOL;
                     token1++;
                 } else if(is_valid_float(str)) {
                     token[token1].name = str;
                     token[token1].type = "float_literal";
                     token[token1].id = LIT_FLOAT;
                     token1++;
-                } else if(isNotkey(str) && ch == '(') {
+                } else if(is_valid_bool(str)) {
+                    token[token1].name = str;
+                    token[token1].type = "bool_literal";
+                    token[token1].id = LIT_BOOL;
+                    token1++;
+                } else if(is_valid_identifier(str) && ch == '(') {
                     token[token1].name = str;
                     token[token1].type = "func";
                     token[token1].id = FUN_FUNC;
                     token1++;
-                } else if(is_valid_identifier(str) && isNotkey(str)) {
+                } else if(is_valid_identifier(str)) {
                     token[token1].name = str;
                     token[token1].type = "identifier";
                     token[token1].id = ID_IDENT;
@@ -403,74 +430,141 @@ int main() {
                 }
             }
 
-            switch(ch) {
-                case '#':
-                    str = "#";
-                    while(ch != '\n' && !input.eof()) {
-                        input.get(ch);
-                        if(ch == '>') {
-                            str += ch;
-                            token[token1].name = str;
-                            token[token1].type = "Header";
-                            token[token1].id = 1; // Assuming HEADER = 1
-                            token1++;
-                            str = "";
-                            break;
-                        }
+            if (ch == '#') {
+                str = "#";
+                while(ch != '\n' && !input.eof()) {
+                    input.get(ch);
+                    if(ch == '>') {
                         str += ch;
-                    }
-                    break;
-                case '=':
-                    if(prev_char == '=') {
-                        token[token1-1].name = "==";
-                        token[token1-1].type = "EQUAL";
-                        token[token1-1].id = OP_EQUAL;
-                    } else {
-                        token[token1].name = "=";
-                        token[token1].type = "ASSIGNMENT";
-                        token[token1].id = OP_ASSIGNMENT;
+                        token[token1].name = str;
+                        token[token1].type = "Header";
+                        token[token1].id = HEADER;
                         token1++;
+                        str = "";
+                        break;
                     }
-                    break;
-                case ';': token[token1] = {";", "semicolon", PUNC_SEMICOLON}; token1++; break;
-                case ',': token[token1] = {",", "comma", PUNC_COMMA}; token1++; break;
-                case '(': token[token1] = {"(", "Round_Bracket_O", PUNC_OPEN_ROUNDBRAC}; token1++; break;
-                case ')': token[token1] = {")", "Round_Bracket_C", PUNC_CLOSE_ROUNDBRAC}; token1++; break;
-                case '{': token[token1] = {"{", "Curly_Bracket_O", PUNC_OPEN_CURLYBRAC}; token1++; break;
-                case '}': token[token1] = {"}", "Curly_Bracket_C", PUNC_CLOSE_CURLYBRAC}; token1++; break;
-                case '[': token[token1] = {"[", "Square_Bracket_O", PUNC_OPEN_SQUAREBRAC}; token1++; break;
-                case ']': token[token1] = {"]", "Square_Bracket_C", PUNC_CLOSE_SQUAREBRAC}; token1++; break;
-                case '+': token[token1] = {"+", "addition", OP_ADDITION}; token1++; break;
-                case '-': token[token1] = {"-", "subtraction", OP_SUBTRACTION}; token1++; break;
-                case '*': token[token1] = {"*", "multiplication", OP_MULTIPLICATION}; token1++; break;
-                case '/': token[token1] = {"/", "division", OP_DIVISION}; token1++; break;
-                case '<':
-                    if(prev_char == '<' && token[token1-1].name != "<=") {
-                        token[token1-1].name = "<=";
-                        token[token1-1].type = "LESS_EQUAL";
-                        token[token1-1].id = OP_LESSEQUAL;
-                    } else {
-                        token[token1] = {"<", "lesser", OP_LESSER}; token1++;
-                    }
-                    break;
-                case '>':
-                    if(prev_char == '>' && token[token1-1].name != ">=") {
-                        token[token1-1].name = ">=";
-                        token[token1-1].type = "GREATER_EQUAL";
-                        token[token1-1].id = OP_GREATEREQUAL;
-                    } else {
-                        token[token1] = {">", "greater", OP_GREATER}; token1++;
-                    }
-                    break;
-                case '!':
-                    if(prev_char == '!' && token[token1-1].name != "!=") {
-                        token[token1-1].name = "!=";
-                        token[token1-1].type = "NOT_EQUAL";
-                        token[token1-1].id = OP_NOTEQUAL;
-                    } else {
-                        token[token1] = {"!", "NOT", OP_NOT}; token1++;
-                    }
-                    break;
+                    str += ch;
+                }
+            }
+            else if (ch == '=') {
+                if(prev_char == '=') {
+                    token[token1-1].name = "==";
+                    token[token1-1].type = "EQUAL";
+                    token[token1-1].id = OP_EQUAL;
+                } else {
+                    token[token1].name = "=";
+                    token[token1].type = "ASSIGNMENT";
+                    token[token1].id = OP_ASSIGNMENT;
+                    token1++;
+                }
+            }
+            else if (ch == ';') {
+                token[token1].name = ";";
+                token[token1].type = "semicolon";
+                token[token1].id = PUNC_SEMICOLON;
+                token1++;
+            }
+            else if (ch == ',') {
+                token[token1].name = ",";
+                token[token1].type = "comma";
+                token[token1].id = PUNC_COMMA;
+                token1++;
+            }
+            else if (ch == '(') {
+                token[token1].name = "(";
+                token[token1].type = "Round_Bracket_O";
+                token[token1].id = PUNC_OPEN_ROUNDBRAC;
+                token1++;
+            }
+            else if (ch == ')') {
+                token[token1].name = ")";
+                token[token1].type = "Round_Bracket_C";
+                token[token1].id = PUNC_CLOSE_ROUNDBRAC;
+                token1++;
+            }
+            else if (ch == '{') {
+                token[token1].name = "{";
+                token[token1].type = "Curly_Bracket_O";
+                token[token1].id = PUNC_OPEN_CURLYBRAC;
+                token1++;
+            }
+            else if (ch == '}') {
+                token[token1].name = "}";
+                token[token1].type = "Curly_Bracket_C";
+                token[token1].id = PUNC_CLOSE_CURLYBRAC;
+                token1++;
+            }
+            else if (ch == '[') {
+                token[token1].name = "[";
+                token[token1].type = "Square_Bracket_O";
+                token[token1].id = PUNC_OPEN_SQUAREBRAC;
+                token1++;
+            }
+            else if (ch == ']') {
+                token[token1].name = "]";
+                token[token1].type = "Square_Bracket_C";
+                token[token1].id = PUNC_CLOSE_SQUAREBRAC;
+                token1++;
+            }
+            else if (ch == '+') {
+                token[token1].name = "+";
+                token[token1].type = "addition";
+                token[token1].id = OP_ADDITION;
+                token1++;
+            }
+            else if (ch == '-') {
+                token[token1].name = "-";
+                token[token1].type = "subtraction";
+                token[token1].id = OP_SUBTRACTION;
+                token1++;
+            }
+            else if (ch == '*') {
+                token[token1].name = "*";
+                token[token1].type = "multiplication";
+                token[token1].id = OP_MULTIPLICATION;
+                token1++;
+            }
+            else if (ch == '/') {
+                token[token1].name = "/";
+                token[token1].type = "division";
+                token[token1].id = OP_DIVISION;
+                token1++;
+            }
+            else if (ch == '<') {
+                if(prev_char == '<' && token[token1-1].name != "<=") {
+                    token[token1-1].name = "<=";
+                    token[token1-1].type = "LESS_EQUAL";
+                    token[token1-1].id = OP_LESSEQUAL;
+                } else {
+                    token[token1].name = "<";
+                    token[token1].type = "lesser";
+                    token[token1].id = OP_LESSER;
+                    token1++;
+                }
+            }
+            else if (ch == '>') {
+                if(prev_char == '>' && token[token1-1].name != ">=") {
+                    token[token1-1].name = ">=";
+                    token[token1-1].type = "GREATER_EQUAL";
+                    token[token1-1].id = OP_GREATEREQUAL;
+                } else {
+                    token[token1].name = ">";
+                    token[token1].type = "greater";
+                    token[token1].id = OP_GREATER;
+                    token1++;
+                }
+            }
+            else if (ch == '!') {
+                if(prev_char == '!' && token[token1-1].name != "!=") {
+                    token[token1-1].name = "!=";
+                    token[token1-1].type = "NOT_EQUAL";
+                    token[token1-1].id = OP_NOTEQUAL;
+                } else {
+                    token[token1].name = "!";
+                    token[token1].type = "NOT";
+                    token[token1].id = OP_NOT;
+                    token1++;
+                }
             }
             str = "";
         } else if(ch == '"') {
