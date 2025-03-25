@@ -172,7 +172,7 @@ TreeNode* parse_print_stmt() {
 TreeNode* parse_factor() {
     TreeNode* node = create_node(FACTOR, (Token){"factor", "FACTOR", 0});
     int t = get_current_token().id;
-    if (t == 61 && tokens[current + 1].id == 38) { // Function call
+    if (t == 61 && tokens[current + 1].id == 38) { 
         match(61);
         TreeNode* id_node = create_node(FACTOR, tokens[current-1]);
         match(38);
@@ -194,7 +194,7 @@ TreeNode* parse_factor() {
 
 TreeNode* parse_program() {
     TreeNode* node = create_node(PROGRAM, (Token){"program", "PROGRAM", 0});
-    while (current < token_count && tokens[current].id == 1) current++; // Skip headers
+    while (current < token_count && tokens[current].id == 1) current++; // headers
     node->child1 = parse_decl_list();
     node->child2 = parse_func_list();
     if (current < token_count && tokens[current].id == 9) {
