@@ -9,50 +9,50 @@ struct Token {
 
 Token token[10000];
 enum TokenID {
-    HEADER = 1,          // #include directives
-    LIT_INT = 3,         // Integer literals (e.g., 0, 1)
-    LIT_FLOAT = 4,       // Float literals (e.g., 13.5)
-    LIT_BOOL = 5,        // Boolean literals (true, false)
-    LIT_STRING = 6,      // String literals (e.g., "Hello")
-    MAIN_FUNC = 9,       // int main
-    KW_WHILE = 14,       // while
-    KW_FOR = 15,         // for
-    KW_BREAK = 20,       // break
-    KW_CONTINUE = 21,    // continue (new)
-    KW_IF = 22,          // if
-    KW_ELSE = 23,        // else
-    KW_SWITCH = 24,      // switch (new)
-    KW_DO = 25,          // do (new)
-    KW_CASE = 26,        // case (new)
-    KW_RETURN = 30,      // return
-    ID_IDENT = 28,       // Identifiers (e.g., x, f)
-    PUNC_SEMICOLON = 36, // ;
-    PUNC_COMMA = 37,     // ,
-    PUNC_OPEN_ROUNDBRAC = 38,  // (
-    PUNC_CLOSE_ROUNDBRAC = 39, // )
-    PUNC_OPEN_CURLYBRAC = 40,  // {
-    PUNC_CLOSE_CURLYBRAC = 41, // }
-    PUNC_OPEN_SQUAREBRAC = 42, // [
-    PUNC_CLOSE_SQUAREBRAC = 43,// ]
-    OP_ADDITION = 46,    // +
-    OP_SUBTRACTION = 47, // -
-    OP_MULTIPLICATION = 48, // *
-    OP_DIVISION = 49,    // /
-    OP_ASSIGNMENT = 50,  // =
-    OP_GREATER = 51,     // >
-    OP_LESSER = 52,      // <
-    OP_NOT = 53,         // !
-    OP_GREATEREQUAL = 54,// >=
-    OP_LESSEQUAL = 55,   // <=
-    OP_EQUAL = 56,       // ==
-    OP_NOTEQUAL = 57,    // !=
-    FUN_FUNC = 61,       // Function calls/declarations (e.g., printf, add)
-    TYPE_INT = 81,       // int
-    TYPE_FLOAT = 82,     // float
-    TYPE_BOOL = 83,      // bool
-    TYPE_VOID = 84,      // void
-    TYPE_DOUBLE = 85,    // double
-    TYPE_CHAR = 86       // char
+    HEADER = 1,          
+    LIT_INT = 3,         
+    LIT_FLOAT = 4,      
+    LIT_BOOL = 5,       
+    LIT_STRING = 6,     
+    MAIN_FUNC = 9,       
+    KW_WHILE = 14,     
+    KW_FOR = 15,        
+    KW_BREAK = 20,      
+    KW_CONTINUE = 21,    
+    KW_IF = 22,          
+    KW_ELSE = 23,        
+    KW_SWITCH = 24,     
+    KW_DO = 25,          
+    KW_CASE = 26,        
+    KW_RETURN = 30,      
+    ID_IDENT = 28,       
+    PUNC_SEMICOLON = 36, 
+    PUNC_COMMA = 37,    
+    PUNC_OPEN_ROUNDBRAC = 38,  
+    PUNC_CLOSE_ROUNDBRAC = 39, 
+    PUNC_OPEN_CURLYBRAC = 40,  
+    PUNC_CLOSE_CURLYBRAC = 41, 
+    PUNC_OPEN_SQUAREBRAC = 42, 
+    PUNC_CLOSE_SQUAREBRAC = 43,
+    OP_ADDITION = 46,    
+    OP_SUBTRACTION = 47, 
+    OP_MULTIPLICATION = 48, 
+    OP_DIVISION = 49,    
+    OP_ASSIGNMENT = 50,  
+    OP_GREATER = 51,     
+    OP_LESSER = 52,      
+    OP_NOT = 53,         
+    OP_GREATEREQUAL = 54,
+    OP_LESSEQUAL = 55,   
+    OP_EQUAL = 56,       
+    OP_NOTEQUAL = 57,    
+    FUN_FUNC = 61,      
+    TYPE_INT = 81,       
+    TYPE_FLOAT = 82,     
+    TYPE_BOOL = 83,      
+    TYPE_VOID = 84,      
+    TYPE_DOUBLE = 85,    
+    TYPE_CHAR = 86       
 };
 
 void removeAllcomments(FILE *input_file, FILE *output_file) {
@@ -116,7 +116,8 @@ bool is_type_specifier(string str) {
 }
 
 bool is_valid_integer(string str) {
-    if(str.empty()) return false;
+    if(str.empty())
+     return false;
     for(int i = 0; i < str.size(); i++) {
         if(str[i] < '0' || str[i] > '9') return false;
     }
@@ -175,7 +176,7 @@ int main() {
     cout << "Comments have been removed successfully.\n";*/
     char inputFileName[100];
 
-    // Prompt the user to enter the input file name
+    
     cout << "Enter the input file name (e.g., input.txt): ";
     cin >> inputFileName;
 
@@ -190,14 +191,14 @@ int main() {
     FILE *output_file = fopen("sourcecode.txt", "w");
     if (output_file == NULL) {
         cout << "Error: Could not open output file 'sourcecode.txt'.\n";
-        fclose(input_file); // Close the input file before exiting
+        fclose(input_file); 
         return 1;
     }
 
-    // Remove comments from the input file and write to the output file
+   
     removeAllcomments(input_file, output_file);
 
-    // Close the files
+   
     fclose(input_file);
     fclose(output_file);
 
